@@ -5,15 +5,15 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 500},
+            gravity: {y: 1500},
             debug: false
         }
     },
-    scene: {
+    scene: {                //default scene
         key: 'main',
-        preload: preload,
-        create: create,
-        update: update
+        preload: preload,   //preload the game assets
+        create: create,     //create the map, player and all other game objects
+        update: update      //update the game
     }
 };
 
@@ -22,7 +22,7 @@ var game = new Phaser.Game(config);
 var map;
 var player;
 var cursors;
-var groundLayer, coinLayer;
+var groundLayer, coinLayer, redLayer;
 var text;
 var score = 0;
 
@@ -35,6 +35,9 @@ function preload() {
     this.load.image('coin', 'assets/coinGold.png');
     // player animations
     this.load.atlas('player', 'assets/player.png', 'assets/player.json');
+
+
+    this.load.spritesheet('redTiles', 'assets/redTile.png', {frameWidth: 70, frameHeight: 70});
 }
 
 function create() {
@@ -52,6 +55,17 @@ function create() {
     var coinTiles = map.addTilesetImage('coin');
     // add coins as tiles
     coinLayer = map.createDynamicLayer('Coins', coinTiles, 0, 0);
+
+
+
+    //redTiles
+    var redTiles = map.addTilesetImage('redTiles');
+    // create the ground layer
+    redLayer = map.createDynamicLayer('redTiles', redTiles, 0, 0);
+
+
+
+
 
     // set the boundaries of our game world
     this.physics.world.bounds.width = groundLayer.width;
