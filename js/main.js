@@ -1,8 +1,10 @@
 import MainMenuScene from './MainMenuScene.js'
 import PlayScene from './PlayScene.js'
+import SettingsScene from './SettingsScene.js'
 
 var mainMenuScene = new MainMenuScene()
 var playScene = new PlayScene()
+var settingsScene = new SettingsScene()
 
 var config = {
     type: Phaser.AUTO,
@@ -18,7 +20,15 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
-game.scene.add('mainMenuScene', mainMenuScene)
-game.scene.add('playScene', playScene)
 
-game.scene.start('mainMenuScene')
+game.global = {
+  soundtrack          : undefined, // Soundtrack currently playing
+  soundtrackVolume    : 1,         // Volume of currently playing soundtrack
+  isSoundMuted        : false,     // Is sound muted?
+}
+
+game.scene.add('mainMenuScene', mainMenuScene);
+game.scene.add('settingsScene', settingsScene);
+game.scene.add('playScene', playScene);
+
+game.scene.start('mainMenuScene');

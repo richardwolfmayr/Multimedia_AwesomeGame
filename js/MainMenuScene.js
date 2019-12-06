@@ -1,3 +1,5 @@
+var soundtrack;
+
 class MainMenuScene extends Phaser.Scene {
   constructor() {
 
@@ -12,25 +14,30 @@ class MainMenuScene extends Phaser.Scene {
 
   preload() {
     // map made with Tiled in JSON format
-    this.load.tilemapTiledJSON('main_menu_background', 'assets/main_menu_background.json');
+    this.load.tilemapTiledJSON('game_background', 'assets/game_background.json');
 
     // tiles in spritesheet
     this.load.spritesheet('tiles', 'assets/tiles.png', {frameWidth: 70, frameHeight: 70});
 
     // Play button
-    this.load.svg('play_button', 'assets/svg/play_button.svg')
+    this.load.svg('play_button', 'assets/svg/play_button.svg');
 
     // Settings button
-    this.load.svg('settings_button', 'assets/svg/settings_button.svg')
+    this.load.svg('settings_button', 'assets/svg/settings_button.svg');
 
-    // Exit button
-    this.load.svg('exit_button', 'assets/svg/exit_button.svg')
-
+    // Default soundtrack
+    this.load.audio('soundtrack', ['assets/audio/Rammstein - Sonne.mp3']);
   }
 
   create() {
+      if (this.game.soundtrack == undefined) {
+        this.setSoundtrack();
+      }
+
+      this.setMainMenu();
+
       // load the map
-      var map = this.make.tilemap({key: 'main_menu_background'});
+      var map = this.make.tilemap({key: 'game_background'});
 
       // tiles for the ground layer
       var groundTiles = map.addTilesetImage('tiles');
@@ -38,23 +45,53 @@ class MainMenuScene extends Phaser.Scene {
       // create the ground layer
       var groundLayer = map.createDynamicLayer('World', groundTiles, 0, 0);
 
-      this.playButton = this.add.sprite(window.innerWidth / 2, window.innerHeight / 5 * 2, 'play_button').setInteractive();
-      this.settingsButton = this.add.sprite(window.innerWidth / 2, window.innerHeight / 5 * 3, 'settings_button').setInteractive();
-      this.exitButton = this.add.sprite(window.innerWidth / 2, window.innerHeight / 5 * 4, 'exit_button').setInteractive();
-
-      this.playButton.on('pointerdown', function (event) {
-        this.scene.start('playScene');
-      }, this); // Start game on click.
-      this.settingsButton.on('pointerdown', function (event) { console.log('Clicked settings!'); }); // Start game on click.
-      this.exitButton.on('pointerdown', function (event) { console.log('Clicked exit!'); }); // Start game on click.
-
-
       // set background color, so the sky is not black
       this.cameras.main.setBackgroundColor('#ccccff');
   }
 
-  update(time, delta) {
+  setSoundtrack() {
+    this.game.soundtrack = this.sound.add('soundtrack');
+    this.sound.context.resume();
+    this.sound.pauseOnBlur = false;
+    this.game.soundtrack.play();
+  }
 
+  setMainMenu() {
+
+    this.playButton = this.add.sprite(window.innerWidth / 2, window.innerHeight / 6 * 2, 'play_button').setInteractive();
+    this.playButton.on('pointerdown', function (event) {
+      console.log('Play');
+      this.scene.start('playScene');
+    }, this); // Start game on click.
+
+    this.playText = this.add.text(this.playButton.x - 150, this.playButton.y - 48, 'Play', {
+        fontSize: '20px',
+        fill: '#000000'
+    });
+    this.playText.on('pointerdown', function (event) {
+      this.scene.start('playScene');
+    });
+    this.playText.setScrollFactor(0);
+
+    this.settingsButton = this.add.sprite(window.innerWidth / 2, window.innerHeight / 6 * 3, 'settings_button').setInteractive();
+    this.settingsButton.on('pointerdown', function (event) {
+      console.log('Settings');
+      this.scene.start('settingsScene');
+    }, this); // Start settings on click
+
+    this.settingsText = this.add.text(this.settingsButton.x - 150, this.settingsButton.y - 48, 'Settings', {
+        fontSize: '20px',
+        fill: '#000000'
+    });
+    this.settingsText.on('pointerdown', function (event) {
+      this.scene.start('settingsScene');
+    });
+    this.settingsText.setScrollFactor(0);
+
+  }
+
+
+  update(time, delta) {
   }
 }
 
