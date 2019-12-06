@@ -1,4 +1,5 @@
-var soundtrack;
+import CommonMethodHelper from './CommonMethodHelper.js';
+import CONSTANTS from './Constants.js';
 
 class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -57,39 +58,22 @@ class MainMenuScene extends Phaser.Scene {
   }
 
   setMainMenu() {
+    // Play button
+    // These coordinates are based on considering the container as (0, 0)
+    this.playButton = CommonMethodHelper.addButton(this, 100, -15 + CONSTANTS.svgOffset, 'play_button');
+    this.playText = this.add.text(-80, -15, 'Play', CONSTANTS.settingsTextStyle);
 
-    this.playButton = this.add.sprite(window.innerWidth / 2, window.innerHeight / 6 * 2, 'play_button').setInteractive();
-    this.playButton.on('pointerdown', function (event) {
-      console.log('Play');
-      this.scene.start('playScene');
-    }, this); // Start game on click.
+    this.playContainer = CommonMethodHelper.addContainer(this, window.innerWidth / 2, window.innerHeight / 6 * 2 , [this.playButton, this.playText], 170, 40);
+    this.playContainer.on('pointerdown', (event) => this.scene.start('playScene'), this); // Start game on click.
 
-    this.playText = this.add.text(this.playButton.x - 150, this.playButton.y - 48, 'Play', {
-        fontSize: '20px',
-        fill: '#000000'
-    });
-    this.playText.on('pointerdown', function (event) {
-      this.scene.start('playScene');
-    });
-    this.playText.setScrollFactor(0);
+    // Settings option
+    // These coordinates are based on considering the container as (0, 0)
+    this.settingsButton = CommonMethodHelper.addButton(this, 100, -15 + CONSTANTS.svgOffset, 'settings_button');
+    this.settingsText = this.add.text(-80, -15, 'Settings', CONSTANTS.settingsTextStyle);
 
-    this.settingsButton = this.add.sprite(window.innerWidth / 2, window.innerHeight / 6 * 3, 'settings_button').setInteractive();
-    this.settingsButton.on('pointerdown', function (event) {
-      console.log('Settings');
-      this.scene.start('settingsScene');
-    }, this); // Start settings on click
-
-    this.settingsText = this.add.text(this.settingsButton.x - 150, this.settingsButton.y - 48, 'Settings', {
-        fontSize: '20px',
-        fill: '#000000'
-    });
-    this.settingsText.on('pointerdown', function (event) {
-      this.scene.start('settingsScene');
-    });
-    this.settingsText.setScrollFactor(0);
-
+    this.settingsContainer = CommonMethodHelper.addContainer(this, window.innerWidth / 2, window.innerHeight / 6 * 3 , [this.settingsButton, this.settingsText], 170, 40);
+    this.settingsContainer.on('pointerdown', (event) => this.scene.start('settingsScene'), this); // Start game on click.
   }
-
 
   update(time, delta) {
   }

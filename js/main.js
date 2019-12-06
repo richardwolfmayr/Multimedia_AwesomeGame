@@ -22,9 +22,7 @@ var config = {
 var game = new Phaser.Game(config);
 
 game.global = {
-  soundtrack          : undefined, // Soundtrack currently playing
-  soundtrackVolume    : 1,         // Volume of currently playing soundtrack
-  isSoundMuted        : false,     // Is sound muted?
+  // Place for global variables
 }
 
 game.scene.add('mainMenuScene', mainMenuScene);

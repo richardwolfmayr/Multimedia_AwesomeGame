@@ -1,3 +1,5 @@
+import CONSTANTS from './Constants.js';
+
 class PlayScene extends Phaser.Scene {
   constructor() {
     super({
@@ -22,9 +24,13 @@ class PlayScene extends Phaser.Scene {
       this.load.atlas('player', 'assets/player.png', 'assets/player.json');
 
       this.load.spritesheet('redTiles', 'assets/redTile.png', {frameWidth: 70, frameHeight: 70});
+
+      this.load.audio('jump_sound', ['assets/audio/jump.mp3']);
   }
 
   create() {
+      this.jumpSound = this.game.sound.add('jump_sound');
+
       // load the map
       this.map = this.make.tilemap({key: 'map'});
 
@@ -40,8 +46,6 @@ class PlayScene extends Phaser.Scene {
 
       // add coins as tiles
       this.coinLayer = this.map.createDynamicLayer('Coins', coinTiles, 0, 0);
-      console.log(this.coinLayer)
-
 
       //redTiles
       var redTiles = this.map.addTilesetImage('redTiles');
@@ -125,6 +129,7 @@ class PlayScene extends Phaser.Scene {
       // jump
       if (this.cursors.up.isDown && this.player.body.onFloor())
       {
+          this.jumpSound.play();
           this.player.body.setVelocityY(-500);
       }
   }
