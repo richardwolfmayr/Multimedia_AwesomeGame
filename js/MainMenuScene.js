@@ -54,7 +54,7 @@ class MainMenuScene extends Phaser.Scene {
     this.game.soundtrack = this.sound.add('soundtrack');
     this.sound.context.resume();
     this.sound.pauseOnBlur = false;
-    this.game.soundtrack.play();
+    // this.game.soundtrack.play();
   }
 
   setMainMenu() {

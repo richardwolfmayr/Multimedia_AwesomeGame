@@ -28,6 +28,25 @@ class PlayScene extends Phaser.Scene {
       this.load.audio('jump_sound', ['assets/audio/jump.mp3']);
   }
 
+  setPlayerHealthBar() {
+
+    this.player.healthbar = this.add.graphics(this.player.x - 125, this.player.y - 115);
+
+    this.player.healthbar.lineStyle(1, 0xFF00FF, 1.0);
+    this.player.healthbar.fillStyle(0x00FF00, 1.0);
+    this.player.healthbar.fillRect(50, 50, 150, 10);
+    this.player.healthbar.strokeRect(50, 50, 150, 10);
+
+    // this.group.add(this.healthbar); // this.group being a pre-initialised group for this entity...
+    this.player.currentHP = 100;
+    this.player.totalHP = 100;
+    this.player.lastHP = 100;
+  }
+
+  rgbToHex(r, g, b) {
+    return "0x" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  }
+
   create() {
       this.jumpSound = this.game.sound.add('jump_sound');
 
@@ -62,8 +81,11 @@ class PlayScene extends Phaser.Scene {
 
       // create the player sprite
       this.player = this.physics.add.sprite(200, 200, 'player');
+
       this.player.setBounce(0.2); // our player will bounce from items
       this.player.setCollideWorldBounds(true); // don't go out of the map
+
+      this.setPlayerHealthBar();
 
       // small fix to our player images, we resize the physics body object slightly
       this.player.body.setSize(this.player.width, this.player.height-8);
@@ -131,7 +153,28 @@ class PlayScene extends Phaser.Scene {
       {
           this.jumpSound.play();
           this.player.body.setVelocityY(-500);
+          this.currentHP = this.currentHP - 5;
       }
+
+      this.updatePlayerHealthBar();
+  }
+
+  updatePlayerHealthBarPosition() {
+    this.player.healthbar.x = this.player.x - 125;
+    this.player.healthbar.y = this.player.y - 115;
+  }
+
+  updatePlayerHealthBar() {
+    if (this.player.currentHP != this.player.lastHP) {
+      this.player.healthbar.lineStyle(1, 0xFF00FF, 1.0);
+      this.player.healthbar.fillStyle(0xFFFFFF, 1.0);
+      this.player.healthbar.fillRect(50, 50, 150, 10);
+      this.player.healthbar.fillStyle(0x00FF00, 1.0);
+      this.player.healthbar.fillRect(50, 50, 50 + Math.ceil(100 * this.player.currentHP / this.player.totalHP), 10);
+      this.player.healthbar.strokeRect(50, 50, 150, 10);
+    }
+
+    this.updatePlayerHealthBarPosition();
   }
 
   collectCoin(sprite, tile) {
