@@ -6,7 +6,9 @@ class PlayScene extends Phaser.Scene {
       key: 'playScene'
     })
 
-    this.score = 0
+    this.score = 0;
+    this.shootTime = 0;
+    this.bullets = [];
   }
 
   init() {
@@ -23,32 +25,71 @@ class PlayScene extends Phaser.Scene {
       // player animations
       this.load.atlas('player', 'assets/player.png', 'assets/player.json');
 
+      // Enemy animations
+      this.load.atlas('enemy', 'assets/player.png', 'assets/player.json');
+
+
       this.load.spritesheet('redTiles', 'assets/redTile.png', {frameWidth: 70, frameHeight: 70});
 
       this.load.audio('jump_sound', ['assets/audio/jump.mp3']);
+
+      this.load.audio('enemy_dying', ['assets/audio/enemy_dying.mp3'])
+
+      this.load.svg('bullet', 'assets/svg/exit_button.svg');
   }
 
-  setPlayerHealthBar() {
+  setHealthBar(object) {
 
-    this.player.healthbar = this.add.graphics(this.player.x - 125, this.player.y - 115);
+    object.healthbar = this.add.graphics(object.x - 125, object.y - 115);
 
-    this.player.healthbar.lineStyle(1, 0xFF00FF, 1.0);
-    this.player.healthbar.fillStyle(0x00FF00, 1.0);
-    this.player.healthbar.fillRect(50, 50, 150, 10);
-    this.player.healthbar.strokeRect(50, 50, 150, 10);
+    object.healthbar.lineStyle(1, 0xFF00FF, 1.0);
+    object.healthbar.fillStyle(0x00FF00, 1.0);
+    object.healthbar.fillRect(50, 50, 150, 10);
+    object.healthbar.strokeRect(50, 50, 150, 10);
 
     // this.group.add(this.healthbar); // this.group being a pre-initialised group for this entity...
-    this.player.currentHP = 100;
-    this.player.totalHP = 100;
-    this.player.lastHP = 100;
+    object.currentHP = 100;
+    object.totalHP = 100;
+    object.lastHP = 100;
+  }
+
+  setHealthBars(objectsArray) {
+    for (var i = 0; i < objectsArray.length; i++) {
+      this.setHealthBar(objectsArray[i]);
+    }
   }
 
   rgbToHex(r, g, b) {
     return "0x" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
   }
 
+  createEnemies() {
+    // create the enemy sprite
+    this.enemies = []
+    for (var i = 1; i < 10; i++) {
+      var enemy = this.physics.add.sprite(400, 200, 'enemy');
+      enemy.body.setSize(enemy.width, enemy.height - 8);
+      this.physics.add.collider(this.groundLayer, enemy);
+      this.anims.create({
+          key: 'walk',
+          frames: this.anims.generateFrameNames( 'enemy', {prefix: 'p1_walk', start: 1, end: 11, zeroPad: 2}),
+          frameRate: 10,
+          repeat: -1
+      });
+      // idle with only one frame, so repeat is not neaded
+      this.anims.create({
+          key: 'idle',
+          frames: [{key:  'enemy', frame: 'p1_stand'}],
+          frameRate: 10,
+      });
+
+      this.enemies.push(enemy);
+    }
+  }
+
   create() {
       this.jumpSound = this.game.sound.add('jump_sound');
+      this.enemyDyingSound = this.game.sound.add('enemy_dying');
 
       // load the map
       this.map = this.make.tilemap({key: 'map'});
@@ -73,8 +114,6 @@ class PlayScene extends Phaser.Scene {
 
 
 
-
-
       // set the boundaries of our game world
       this.physics.world.bounds.width = this.groundLayer.width;
       this.physics.world.bounds.height = this.groundLayer.height;
@@ -85,7 +124,9 @@ class PlayScene extends Phaser.Scene {
       this.player.setBounce(0.2); // our player will bounce from items
       this.player.setCollideWorldBounds(true); // don't go out of the map
 
-      this.setPlayerHealthBar();
+      this.setHealthBar(this.player);
+      this.createEnemies();
+      this.setHealthBars(this.enemies);
 
       // small fix to our player images, we resize the physics body object slightly
       this.player.body.setSize(this.player.width, this.player.height-8);
@@ -130,9 +171,52 @@ class PlayScene extends Phaser.Scene {
       });
       // fix the text to the camera
       this.scoreText.setScrollFactor(0);
+
+
+
+        // this.bullets = this.game.add.group();
+  }
+
+  damageEnemy(enemy, bullet) {
+    // console.log(this.bullets);
+    enemy.currentHP = enemy.currentHP - 50;
+    this.bullets = this.bullets.filter((arrayBullet) => arrayBullet != bullet);
+    bullet.setVisible(false);
   }
 
   update(time, delta) {
+      if (this.cursors.down.isDown) {
+        if (this.time.now > this.shootTime) {
+          this.shootTime = this.time.now + 200;
+          var bullet = this.physics.add.sprite(this.player.x, this.player.y, 'bullet');
+          bullet.direction = this.player.flipX ? 'WEST' : 'EAST';
+          for (var i = 0; i < this.enemies.length; i++) {
+            this.physics.add.collider(this.enemies[i], bullet, this.damageEnemy, null, this);
+          }
+          this.bullets.push(bullet);
+        }
+      }
+
+      for (var i = 0; i < this.bullets.length; i++) {
+        if (this.bullets[i].direction == 'WEST') {
+          this.bullets[i].setVelocityX(-400);
+        } else {
+          this.bullets[i].setVelocityX(400);
+        }
+        this.bullets[i].setVelocityY(0);
+      }
+
+      for (var i = 0; i < this.enemies.length; i++) {
+        if (Math.random() < 0.5) {
+          this.enemies[i].setVelocityX(-200);
+          this.enemies[i].anims.play('walk', true);
+          this.enemies[i].flipX = true;
+        } else {
+          this.enemies[i].setVelocityX(200);
+          this.enemies[i].anims.play('walk', true);
+          this.enemies[i].flipX = false;
+        }
+      }
       if (this.cursors.left.isDown)
       {
           this.player.body.setVelocityX(-200);
@@ -152,29 +236,43 @@ class PlayScene extends Phaser.Scene {
       if (this.cursors.up.isDown && this.player.body.onFloor())
       {
           this.jumpSound.play();
-          this.player.body.setVelocityY(-500);
+          this.player.body.setVelocityY(-1000);
           this.currentHP = this.currentHP - 5;
       }
 
-      this.updatePlayerHealthBar();
+
+      this.updateHealthBar(this.player);
+      this.updateHealthBars(this.enemies, 'enemy');
   }
 
-  updatePlayerHealthBarPosition() {
-    this.player.healthbar.x = this.player.x - 125;
-    this.player.healthbar.y = this.player.y - 115;
+  updateHealthBarPosition(object) {
+    object.healthbar.x = object.x - 125;
+    object.healthbar.y = object.y - 115;
   }
 
-  updatePlayerHealthBar() {
-    if (this.player.currentHP != this.player.lastHP) {
-      this.player.healthbar.lineStyle(1, 0xFF00FF, 1.0);
-      this.player.healthbar.fillStyle(0xFFFFFF, 1.0);
-      this.player.healthbar.fillRect(50, 50, 150, 10);
-      this.player.healthbar.fillStyle(0x00FF00, 1.0);
-      this.player.healthbar.fillRect(50, 50, 50 + Math.ceil(100 * this.player.currentHP / this.player.totalHP), 10);
-      this.player.healthbar.strokeRect(50, 50, 150, 10);
+  updateHealthBars(objectsArray, objectType = 'player') {
+    for (var i = 0; i < objectsArray.length; i++) {
+      this.updateHealthBar(objectsArray[i], objectType);
+    }
+  }
+
+  updateHealthBar(object, objectType = 'player') {
+    if (objectType == 'enemy' && object.currentHP <= 0) {
+      this.enemies = this.enemies.filter((arrayEnemy) => arrayEnemy != object);
+      this.enemyDyingSound.play();
+      object.setVisible(false);
+      object.healthbar.setVisible(false);
+    }
+    if (object.currentHP != object.lastHP) {
+      object.healthbar.lineStyle(1, 0xFF00FF, 1.0);
+      object.healthbar.fillStyle(0xFFFFFF, 1.0);
+      object.healthbar.fillRect(50, 50, 150, 10);
+      object.healthbar.fillStyle(0x00FF00, 1.0);
+      object.healthbar.fillRect(50, 50, 50 + Math.ceil(100 * object.currentHP / object.totalHP), 10);
+      object.healthbar.strokeRect(50, 50, 150, 10);
     }
 
-    this.updatePlayerHealthBarPosition();
+    this.updateHealthBarPosition(object);
   }
 
   collectCoin(sprite, tile) {
