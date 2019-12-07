@@ -1,8 +1,11 @@
 class AliveObject {
-  constructor(scene, xCoord, yCoord, assetKey) {
+  constructor(scene, xCoord, yCoord, assetKey, deathSound) {
     this.scene = scene;
     this.sprite = this.scene.physics.add.sprite(xCoord, yCoord, assetKey);
     this.sprite.holder = this;
+    this.sprite.setCollideWorldBounds(true); // Collide with world bounds
+    this.deathSound = deathSound;
+    this.isDead = false;
     this.setHealthBar();
   }
 
@@ -25,6 +28,8 @@ class AliveObject {
       this.sprite.healthbar.destroy();
       this.sprite.setActive(false);
       this.sprite.destroy();
+      this.deathSound.play();
+      this.isDead = true;
       return true;
     }
 
@@ -40,6 +45,8 @@ class AliveObject {
       this.sprite.healthbar.fillRect(50, 50, Math.ceil(150 * Math.max(this.currentHP, 0) / this.totalHP), 10);
       this.sprite.healthbar.strokeRect(50, 50, 150, 10);
     }
+
+    this.died();
 
     this.updateHealthBarPosition();
   };

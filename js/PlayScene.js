@@ -1,5 +1,6 @@
 import CONSTANTS from './Constants.js';
 import DumbEnemy from './AliveObjects/DumbEnemy.js';
+import DumbEnemyWithJump from './AliveObjects/DumbEnemyWithJump.js';
 import Player from './AliveObjects/Player.js';
 
 class PlayScene extends Phaser.Scene {
@@ -46,7 +47,7 @@ class PlayScene extends Phaser.Scene {
 
   createPlayer() {
     // create the player sprite
-    this.player = new Player(this, 200, 200, 'player');
+    this.player = new Player(this, 200, 200, 'player', this.enemyDyingSound);
 
     // player will collide with the level tiles
     this.physics.add.collider(this.player.sprite, this.groundLayer);
@@ -83,8 +84,12 @@ class PlayScene extends Phaser.Scene {
         frameRate: 10,
     });
 
-    for (var i = 0; i < 5; i++) {
-      this.enemies.push(new DumbEnemy(this, Math.random() * window.innerWidth, 200, 'enemy'));
+    for (var i = 0; i < 8; i++) {
+      if (Math.random() < 0.5) {
+        this.enemies.push(new DumbEnemy(this, Math.random() * window.innerWidth, 200, 'enemy', this.enemyDyingSound));
+      } else {
+        this.enemies.push(new DumbEnemyWithJump(this, Math.random() * window.innerWidth, 200, 'enemy', this.enemyDyingSound));
+      }
       this.physics.add.collider(this.enemies[i].sprite, this.groundLayer);
       this.physics.add.collider(this.enemies[i].sprite, this.player.sprite, this.damagePlayer, null, this);
     }
@@ -124,8 +129,6 @@ class PlayScene extends Phaser.Scene {
       var redTiles = this.map.addTilesetImage('redTiles');
       // create the ground layer
       var redLayer = this.map.createDynamicLayer('redTiles', redTiles, 0, 0);
-
-
 
       // set the boundaries of our game world
       this.physics.world.bounds.width = this.groundLayer.width;
@@ -171,16 +174,19 @@ class PlayScene extends Phaser.Scene {
 
       // Update bullets position
       this.bullets.forEach((bullet) => {
-        bullet.setVelocityX(bullet.direction == 'WEST' ? -400 : 400);
+        bullet.setVelocityX(bullet.direction == 'WEST' ? -800 : 800);
         bullet.setVelocityY(0);
       });
 
       // Update enemies
       this.enemies.forEach((enemy) => enemy.move().updateHealthBar());
-      this.enemies = this.enemies.filter((enemy) => !enemy.died());
+      this.enemies = this.enemies.filter((enemy) => !enemy.isDead);
 
-      // Update player
-      this.player.move().updateHealthBar();
+      if (this.player.isDead) {
+      } else {
+        // Update player
+        this.player.move().updateHealthBar();
+      }
   }
 
   collectCoin(sprite, tile) {

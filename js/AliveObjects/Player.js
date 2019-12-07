@@ -1,11 +1,10 @@
 import AliveObject from './AliveObject.js';
 
 class Player extends AliveObject {
-  constructor(scene, xCoord, yCoord, assetKey) {
-    super(scene, xCoord, yCoord, assetKey);
+  constructor(scene, xCoord, yCoord, assetKey, deathSound) {
+    super(scene, xCoord, yCoord, assetKey, deathSound);
 
     this.sprite.setBounce(0.2); // our player will bounce from items
-    this.sprite.setCollideWorldBounds(true); // don't go out of the map
 
     // small fix to our player images, we resize the physics body object slightly
     this.sprite.body.setSize(this.sprite.width, this.sprite.height - 8);
