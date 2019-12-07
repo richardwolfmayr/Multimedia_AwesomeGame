@@ -57,28 +57,28 @@ class SettingsScene extends Phaser.Scene {
     });
 
 
-    this.combatText = this.add.text(700, 300, `Combat: ${this.game.global.combat.volume.toFixed(1) * 100}`, CONSTANTS.textStyle);
-    this.combatText.setScrollFactor(0);
-
-    this.combatLessVolume = this.add.sprite(900, 310, 'less_volume_button').setInteractive({ useHandCursor: true, });
-    this.combatLessVolume.on('pointerdown', (event) => {
-      this.game.sound.volume = Math.max(this.game.sound.volume - 0.1, 0).toFixed(1);
-      this.combatText.setText(`Combat: ${Math.max(this.game.sound.volume - 0.1, 0).toFixed(1) * 100}`);
-    }, this);
-
-    this.combatMoreVolume = this.add.sprite(950, 310, 'more_volume_button').setInteractive({ useHandCursor: true, });
-    this.combatMoreVolume.on('pointerdown', (event) => {
-      this.game.sound.volume = Math.min(this.game.sound.volume + 0.1, 1).toFixed(1);
-      this.combatText.setText(`Combat: ${Math.min(this.game.sound.volume + 0.1, 1).toFixed(1) * 100}`);
-    }, this);
-
-    var combatMuteSVGKey = this.game.sound.mute ? 'volume_on_button' : 'volume_off_button';
-    this.combatMute = this.add.sprite(1000, 310, combatMuteSVGKey).setInteractive({ useHandCursor: true, });
-    this.combatMute.on('pointerdown', (event) => {
-        this.game.sound.mute = !this.game.sound.mute;
-        combatMuteSVGKey = !this.game.sound.mute ? 'volume_on_button' : 'volume_off_button';
-        this.combatMute.setTexture(combatMuteSVGKey);
-    });
+    // this.combatText = this.add.text(700, 300, `Combat: ${this.game.global.combat.volume.toFixed(1) * 100}`, CONSTANTS.textStyle);
+    // this.combatText.setScrollFactor(0);
+    //
+    // this.combatLessVolume = this.add.sprite(900, 310, 'less_volume_button').setInteractive({ useHandCursor: true, });
+    // this.combatLessVolume.on('pointerdown', (event) => {
+    //   this.game.sound.volume = Math.max(this.game.sound.volume - 0.1, 0).toFixed(1);
+    //   this.combatText.setText(`Combat: ${Math.max(this.game.sound.volume - 0.1, 0).toFixed(1) * 100}`);
+    // }, this);
+    //
+    // this.combatMoreVolume = this.add.sprite(950, 310, 'more_volume_button').setInteractive({ useHandCursor: true, });
+    // this.combatMoreVolume.on('pointerdown', (event) => {
+    //   this.game.sound.volume = Math.min(this.game.sound.volume + 0.1, 1).toFixed(1);
+    //   this.combatText.setText(`Combat: ${Math.min(this.game.sound.volume + 0.1, 1).toFixed(1) * 100}`);
+    // }, this);
+    //
+    // var combatMuteSVGKey = this.game.sound.mute ? 'volume_on_button' : 'volume_off_button';
+    // this.combatMute = this.add.sprite(1000, 310, combatMuteSVGKey).setInteractive({ useHandCursor: true, });
+    // this.combatMute.on('pointerdown', (event) => {
+    //     this.game.sound.mute = !this.game.sound.mute;
+    //     combatMuteSVGKey = !this.game.sound.mute ? 'volume_on_button' : 'volume_off_button';
+    //     this.combatMute.setTexture(combatMuteSVGKey);
+    // });
 
     this.backButton = this.add.sprite(50, 50, 'less_volume_button').setInteractive({ useHandCursor: true, });
     this.backButton.on('pointerdown', (event) => {
