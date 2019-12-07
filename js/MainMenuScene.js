@@ -61,7 +61,7 @@ class MainMenuScene extends Phaser.Scene {
     // Play button
     // These coordinates are based on considering the container as (0, 0)
     this.playButton = CommonMethodHelper.addButton(this, 100, -15 + CONSTANTS.svgOffset, 'play_button');
-    this.playText = this.add.text(-80, -15, 'Play', CONSTANTS.settingsTextStyle);
+    this.playText = this.add.text(-80, -15, 'Play', CONSTANTS.textStyle);
 
     this.playContainer = CommonMethodHelper.addContainer(this, window.innerWidth / 2, window.innerHeight / 6 * 2 , [this.playButton, this.playText], 170, 40);
     this.playContainer.on('pointerdown', (event) => this.scene.start('playScene'), this); // Start game on click.
@@ -69,7 +69,7 @@ class MainMenuScene extends Phaser.Scene {
     // Settings option
     // These coordinates are based on considering the container as (0, 0)
     this.settingsButton = CommonMethodHelper.addButton(this, 100, -15 + CONSTANTS.svgOffset, 'settings_button');
-    this.settingsText = this.add.text(-80, -15, 'Settings', CONSTANTS.settingsTextStyle);
+    this.settingsText = this.add.text(-80, -15, 'Settings', CONSTANTS.textStyle);
 
     this.settingsContainer = CommonMethodHelper.addContainer(this, window.innerWidth / 2, window.innerHeight / 6 * 3 , [this.settingsButton, this.settingsText], 170, 40);
     this.settingsContainer.on('pointerdown', (event) => this.scene.start('settingsScene'), this); // Start game on click.

@@ -33,7 +33,7 @@ class SettingsScene extends Phaser.Scene {
     // create the ground layer
     var groundLayer = map.createDynamicLayer('World', groundTiles, 0, 0);
 
-    this.soundText = this.add.text(700, 250, `Sound: ${this.game.soundtrack.volume.toFixed(1) * 100}`, CONSTANTS.settingsTextStyle);
+    this.soundText = this.add.text(700, 250, `Sound: ${this.game.soundtrack.volume.toFixed(1) * 100}`, CONSTANTS.textStyle);
     this.soundText.setScrollFactor(0);
 
     this.lessVolumeButton = this.add.sprite(850, 260, 'less_volume_button').setInteractive({ useHandCursor: true, });
