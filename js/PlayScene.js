@@ -108,7 +108,6 @@ class PlayScene extends Phaser.Scene {
   create() {
       this.jumpSound = this.game.sound.add('jump_sound');
       this.enemyDyingSound = this.game.sound.add('enemy_dying');
-
       // load the map
       this.map = this.make.tilemap({key: 'map'});
 

@@ -22,7 +22,6 @@ var config = {
 var game = new Phaser.Game(config);
 
 game.global = {
-  // Place for global variables
 }
 
 game.scene.add('mainMenuScene', mainMenuScene);
