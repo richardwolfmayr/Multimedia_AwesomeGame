@@ -1,5 +1,5 @@
-import CommonMethodHelper from './CommonMethodHelper.js';
-import CONSTANTS from './Constants.js';
+import CommonMethodHelper from '../CommonMethodHelper.js';
+import CONSTANTS from '../Constants.js';
 
 class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -25,6 +25,9 @@ class MainMenuScene extends Phaser.Scene {
 
     // Settings button
     this.load.svg('settings_button', 'assets/svg/settings_button.svg');
+
+    // Help button
+    this.load.svg('help_button', 'assets/svg/help_button.svg');
 
     // Default soundtrack
     this.load.audio('soundtrack', ['assets/audio/Rammstein - Sonne.mp3']);
@@ -70,7 +73,6 @@ class MainMenuScene extends Phaser.Scene {
     // These coordinates are based on considering the container as (0, 0)
     this.playButton = CommonMethodHelper.addButton(this, 100, -15 + CONSTANTS.svgOffset, 'play_button');
     this.playText = this.add.text(-80, -15, 'Play', CONSTANTS.textStyle);
-
     this.playContainer = CommonMethodHelper.addContainer(this, window.innerWidth / 2, window.innerHeight / 6 * 2 , [this.playButton, this.playText], 170, 40);
     this.playContainer.on('pointerdown', (event) => this.scene.start('playScene'), this); // Start game on click.
 
@@ -78,9 +80,14 @@ class MainMenuScene extends Phaser.Scene {
     // These coordinates are based on considering the container as (0, 0)
     this.settingsButton = CommonMethodHelper.addButton(this, 100, -15 + CONSTANTS.svgOffset, 'settings_button');
     this.settingsText = this.add.text(-80, -15, 'Settings', CONSTANTS.textStyle);
-
     this.settingsContainer = CommonMethodHelper.addContainer(this, window.innerWidth / 2, window.innerHeight / 6 * 3 , [this.settingsButton, this.settingsText], 170, 40);
     this.settingsContainer.on('pointerdown', (event) => this.scene.start('settingsScene'), this); // Start game on click.
+
+    // Help option
+    this.helpButton = CommonMethodHelper.addButton(this, 100, -15 + CONSTANTS.svgOffset, 'help_button');
+    this.helpText = this.add.text(-80, -15, 'Help', CONSTANTS.textStyle);
+    this.helpContainer = CommonMethodHelper.addContainer(this, window.innerWidth / 2, window.innerHeight / 6 * 4 , [this.helpButton, this.helpText], 170, 40);
+    this.helpContainer.on('pointerdown', (event) => this.scene.start('helpScene'), this); // Start game on click.
   }
 
   update(time, delta) {

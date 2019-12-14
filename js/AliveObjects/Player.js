@@ -26,8 +26,10 @@ class Player extends AliveObject {
 
     // Jump
     if (this.scene.cursors.up.isDown && this.sprite.body.onFloor()) {
+      if (!this.scene.jumpSound.isPlaying) {
         this.scene.jumpSound.play();
-        this.sprite.body.setVelocityY(-1000);
+      }
+      this.sprite.body.setVelocityY(-1000);
     }
 
     return this;

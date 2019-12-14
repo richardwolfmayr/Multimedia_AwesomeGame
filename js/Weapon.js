@@ -6,7 +6,7 @@ class Weapon {
 
     this.weaponSlot = this.scene.add.graphics(0,  0);
     this.weaponSlot.fillStyle(0x999966, 1.0);
-    this.weaponSlot.fillRect(0, 0, 60, 60);
+    this.weaponSlot.fillRoundedRect(0, 0, 60, 60, 10);
 
     this.weapon = this.scene.add.sprite(88, 80, spriteKey);
 
@@ -22,16 +22,16 @@ class Weapon {
 
   select() {
     this.weaponSlot.lineStyle(4, 0xFF00FF, 1.0);
-    this.weaponSlot.strokeRect(0, 0, 60, 60);
+    this.weaponSlot.strokeRoundedRect(0, 0, 60, 60, 10);
   }
 
   unselect() {
     this.weaponSlot.lineStyle(4, 0x999966, 1.0);
-    this.weaponSlot.strokeRect(0, 0, 60, 60);
+    this.weaponSlot.strokeRoundedRect(0, 0, 60, 60, 10);
   }
 
-  canShoot() {
-    return this.bulletNumber == 'INF' || this.bulletNumber > 0;
+  canShoot(bulletNumber) {
+    return this.bulletNumber == 'INF' || this.bulletNumber >= bulletNumber;
   }
 
   shootBullet(xCoord, yCoord) {
@@ -43,7 +43,7 @@ class Weapon {
     if (!this.scene.shootingSound.isPlaying) {
       this.scene.shootingSound.play();
     }
-    
+
     var bullet = this.scene.physics.add.sprite(xCoord, yCoord, `pistol_bullet_${this.idx}`);
     bullet.damage = this.damage;
     return bullet;

@@ -1,11 +1,12 @@
-import MainMenuScene from './MainMenuScene.js'
-import PlayScene from './PlayScene.js'
-import SettingsScene from './SettingsScene.js'
+import MainMenuScene from './Scenes/MainMenuScene.js'
+import PlayScene from './Scenes/PlayScene.js'
+import SettingsScene from './Scenes/SettingsScene.js'
+import HelpScene from './Scenes/HelpScene.js';
 
 var mainMenuScene = new MainMenuScene()
 var playScene = new PlayScene()
 var settingsScene = new SettingsScene()
-
+var helpScene = new HelpScene()
 var config = {
     type: Phaser.AUTO,
     width: window.innerWidth,
@@ -27,5 +28,6 @@ game.global = {
 game.scene.add('mainMenuScene', mainMenuScene);
 game.scene.add('settingsScene', settingsScene);
 game.scene.add('playScene', playScene);
+game.scene.add('helpScene', helpScene);
 
 game.scene.start('mainMenuScene');

@@ -1,8 +1,9 @@
-import CONSTANTS from './Constants.js';
-import DumbEnemy from './AliveObjects/DumbEnemy.js';
-import DumbEnemyWithJump from './AliveObjects/DumbEnemyWithJump.js';
-import Player from './AliveObjects/Player.js';
-import Weapon from './Weapon.js';
+import CONSTANTS from '../Constants.js';
+import CommonMethodHelper from '../CommonMethodHelper.js';
+import DumbEnemy from '../AliveObjects/DumbEnemy.js';
+import DumbEnemyWithJump from '../AliveObjects/DumbEnemyWithJump.js';
+import Player from '../AliveObjects/Player.js';
+import Weapon from '../Weapon.js';
 
 class PlayScene extends Phaser.Scene {
   constructor() {
@@ -13,6 +14,7 @@ class PlayScene extends Phaser.Scene {
     this.coinsCollected = 0;
     this.shootTime = 0;
     this.bullets = [];
+    this.isPaused = false;
   }
 
   init() {
@@ -40,6 +42,7 @@ class PlayScene extends Phaser.Scene {
       this.load.audio('shooting', ['assets/audio/shooting.mp3']);
 
       this.load.svg('bullet', 'assets/svg/arrow_bullet_0.svg');
+      this.load.svg('back_button', 'assets/svg/arrow_back.svg');
 
       for (var i = 0; i < 10; i++) {
         this.load.svg(`pistol_gun_${i}`, `assets/svg/pistol_gun_${i}.svg`);
@@ -90,11 +93,11 @@ class PlayScene extends Phaser.Scene {
         frameRate: 10,
     });
 
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 6; i++) {
       if (Math.random() < 0.5) {
-        this.enemies.push(new DumbEnemy(this, Math.random() * window.innerWidth, 200, 'enemy', this.enemyDyingSound));
+        this.enemies.push(new DumbEnemy(this, 300 + Math.random() * (window.innerWidth - 200), 200, 'enemy', this.enemyDyingSound));
       } else {
-        this.enemies.push(new DumbEnemyWithJump(this, Math.random() * window.innerWidth, 200, 'enemy', this.enemyDyingSound));
+        this.enemies.push(new DumbEnemyWithJump(this, 300 + Math.random() * window.innerWidth, 200, 'enemy', this.enemyDyingSound));
       }
       this.physics.add.collider(this.enemies[i].sprite, this.groundLayer);
       this.physics.add.collider(this.enemies[i].sprite, this.player.sprite, this.damagePlayer, null, this);
@@ -117,7 +120,7 @@ class PlayScene extends Phaser.Scene {
     this.weapons[0].container.x = 300 + 0 * 100;
     this.weapons[0].container.y = 30;
     for (var i = 1; i < 10; i++) {
-      this.weapons.push(new Weapon(this, `pistol_gun_${i}`, (i + 1) * 10, i, (i + 1) * 5));
+      this.weapons.push(new Weapon(this, `pistol_gun_${i}`, 10, i, (i + 1) * 5));
       this.weapons[i].container.x = 300 + i * 100;
       this.weapons[i].container.y = 30;
     }
@@ -136,9 +139,17 @@ class PlayScene extends Phaser.Scene {
     }, this);
   }
 
+  setBackButton() {
+    this.backText = this.add.text(30, 0, 'Back', CONSTANTS.textStyle);
+    this.backButton = this.add.sprite(0, 10, 'back_button');
+
+    this.backContainer = CommonMethodHelper.addContainer(this, 50, 50 , [this.backButton, this.backText], 170, 40);
+    this.backContainer.on('pointerdown', (event) => this.scene.start('mainMenuScene'), this); // Start game on click.
+  }
+
   create() {
     this.setWeapons();
-
+    this.setBackButton();
 
       this.jumpSound = this.game.sound.add('jump_sound');
       this.enemyDyingSound = this.game.sound.add('enemy_dying');
@@ -172,6 +183,9 @@ class PlayScene extends Phaser.Scene {
       this.coinLayer.setTileIndexCallback(17, this.collectCoin, this);
 
       this.cursors = this.input.keyboard.createCursorKeys();
+      this.cursors.spacebar = this.input.keyboard.addKey('SPACE');
+      this.cursors.shift = this.input.keyboard.addKey('SHIFT');
+      this.cursors.P = this.input.keyboard.addKey('P');
 
       this.createPlayer();
       this.createEnemies();
@@ -181,6 +195,13 @@ class PlayScene extends Phaser.Scene {
       this.scoreText = this.add.text(20, 570, `Coins: ${this.coinsCollected}`, CONSTANTS.textStyle);
       // fix the text to the camera
       this.scoreText.setScrollFactor(0);
+
+      window.onkeydown = (event) => {
+        if (event.key == "p" || event.key == "P") {
+          this.isPaused = !this.isPaused;
+          this.isPaused ? this.scene.pause() : this.scene.resume();
+        }
+      };
   }
 
   damagePlayer(enemySprite, playerSprite) {
@@ -195,12 +216,24 @@ class PlayScene extends Phaser.Scene {
 
   update(time, delta) {
       // Shoot new bullets
-      if (this.cursors.down.isDown) {
-        if (this.time.now > this.shootTime && this.weapons[this.selectedWeapon].canShoot()) {
-          var bullet = this.weapons[this.selectedWeapon].shootBullet(this.player.sprite.x, this.player.sprite.y);
+      if (this.cursors.spacebar.isDown) {
+        if (this.time.now > this.shootTime) {
+          if (this.weapons[this.selectedWeapon].canShoot(1)) {
+            var bullet = this.weapons[this.selectedWeapon].shootBullet(this.player.sprite.x, this.player.sprite.y);
+
+          } else {
+            var nonEmptyWeapon = this.selectedWeapon;
+            while (!this.weapons[nonEmptyWeapon].canShoot(1)) {
+              nonEmptyWeapon -= 1;
+            }
+
+            this.weapons[this.selectedWeapon].unselect();
+            this.selectedWeapon = nonEmptyWeapon;
+            this.weapons[this.selectedWeapon].select();
+            var bullet = this.weapons[this.selectedWeapon].shootBullet(this.player.sprite.x, this.player.sprite.y);
+          }
 
           this.shootTime = this.time.now + CONSTANTS.SHOOTING_TIMEOUT;
-
           bullet.direction = this.player.sprite.flipX ? 'WEST' : 'EAST';
           this.enemies.forEach((enemy) => this.physics.add.collider(bullet, enemy.sprite, this.bulletHitsEnemy, null, this));
           this.bullets.push(bullet);
@@ -218,6 +251,8 @@ class PlayScene extends Phaser.Scene {
       this.enemies = this.enemies.filter((enemy) => !enemy.isDead);
 
       if (this.player.isDead) {
+        this.isPaused = true;
+        this.scene.pause();
       } else {
         // Update player
         this.player.move().updateHealthBar();
