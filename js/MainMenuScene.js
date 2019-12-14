@@ -51,7 +51,15 @@ class MainMenuScene extends Phaser.Scene {
   }
 
   setSoundtrack() {
-    this.game.soundtrack = this.sound.add('soundtrack');
+    var volume = 1.0;
+    var mute = false;
+    var soundtrackSettings = JSON.parse(window.localStorage.getItem('soundtrackSettings'));
+    if (soundtrackSettings != null) {
+      volume = soundtrackSettings["volume"];
+      mute = soundtrackSettings["mute"];
+    }
+
+    this.game.soundtrack = this.sound.add('soundtrack', { volume: volume, mute: mute });
     this.sound.context.resume();
     this.sound.pauseOnBlur = false;
     this.game.soundtrack.play();

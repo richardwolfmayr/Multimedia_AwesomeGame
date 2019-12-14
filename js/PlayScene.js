@@ -2,6 +2,7 @@ import CONSTANTS from './Constants.js';
 import DumbEnemy from './AliveObjects/DumbEnemy.js';
 import DumbEnemyWithJump from './AliveObjects/DumbEnemyWithJump.js';
 import Player from './AliveObjects/Player.js';
+import Weapon from './Weapon.js';
 
 class PlayScene extends Phaser.Scene {
   constructor() {
@@ -35,10 +36,15 @@ class PlayScene extends Phaser.Scene {
       this.load.spritesheet('redTiles', 'assets/redTile.png', {frameWidth: 70, frameHeight: 70});
 
       this.load.audio('jump_sound', ['assets/audio/jump.mp3']);
-
       this.load.audio('enemy_dying', ['assets/audio/enemy_dying.mp3'])
+      this.load.audio('shooting', ['assets/audio/shooting.mp3']);
 
-      this.load.svg('bullet', 'assets/svg/star.svg');
+      this.load.svg('bullet', 'assets/svg/arrow_bullet_0.svg');
+
+      for (var i = 0; i < 10; i++) {
+        this.load.svg(`pistol_gun_${i}`, `assets/svg/pistol_gun_${i}.svg`);
+        this.load.svg(`pistol_bullet_${i}`, `assets/svg/arrow_bullet_${i}.svg`);
+      }
   }
 
   rgbToHex(r, g, b) {
@@ -105,9 +111,38 @@ class PlayScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#ccccff');
   }
 
+  setWeapons() {
+    this.weapons = [];
+    this.weapons.push(new Weapon(this, `pistol_gun_0`, 'INF', 0, 5));
+    this.weapons[0].container.x = 300 + 0 * 100;
+    this.weapons[0].container.y = 30;
+    for (var i = 1; i < 10; i++) {
+      this.weapons.push(new Weapon(this, `pistol_gun_${i}`, (i + 1) * 10, i, (i + 1) * 5));
+      this.weapons[i].container.x = 300 + i * 100;
+      this.weapons[i].container.y = 30;
+    }
+
+    this.selectedWeapon = 0;
+    this.weapons[this.selectedWeapon].select();
+
+    this.input.keyboard.on('keydown', function(e) {
+      var key = e.key;
+      if (key >= "0" && key <= "9") {
+        var digit = parseInt(key);
+        this.weapons[this.selectedWeapon].unselect();
+        this.selectedWeapon = digit;
+        this.weapons[this.selectedWeapon].select();
+      }
+    }, this);
+  }
+
   create() {
+    this.setWeapons();
+
+
       this.jumpSound = this.game.sound.add('jump_sound');
       this.enemyDyingSound = this.game.sound.add('enemy_dying');
+      this.shootingSound = this.game.sound.add('shooting');
       // load the map
       this.map = this.make.tilemap({key: 'map'});
 
@@ -153,7 +188,7 @@ class PlayScene extends Phaser.Scene {
   }
 
   bulletHitsEnemy(bulletSprite, enemySprite) {
-    enemySprite.holder.gotHurt(10);
+    enemySprite.holder.gotHurt(bulletSprite.damage);
     this.bullets = this.bullets.filter((arrayBullet) => arrayBullet != bulletSprite);
     bulletSprite.destroy();
   }
@@ -161,10 +196,11 @@ class PlayScene extends Phaser.Scene {
   update(time, delta) {
       // Shoot new bullets
       if (this.cursors.down.isDown) {
-        if (this.time.now > this.shootTime) {
+        if (this.time.now > this.shootTime && this.weapons[this.selectedWeapon].canShoot()) {
+          var bullet = this.weapons[this.selectedWeapon].shootBullet(this.player.sprite.x, this.player.sprite.y);
+
           this.shootTime = this.time.now + CONSTANTS.SHOOTING_TIMEOUT;
 
-          var bullet = this.physics.add.sprite(this.player.sprite.x, this.player.sprite.y, 'bullet');
           bullet.direction = this.player.sprite.flipX ? 'WEST' : 'EAST';
           this.enemies.forEach((enemy) => this.physics.add.collider(bullet, enemy.sprite, this.bulletHitsEnemy, null, this));
           this.bullets.push(bullet);

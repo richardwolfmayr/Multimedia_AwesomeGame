@@ -2,10 +2,14 @@ import CONSTANTS from './Constants.js';
 
 class SettingsScene extends Phaser.Scene {
   constructor() {
-
     super({
       key: 'settingsScene'
     })
+
+    this.soundtrackSettings = {
+      volume: 1.0,
+      mute: false,
+    };
   }
 
   init() {
@@ -22,6 +26,50 @@ class SettingsScene extends Phaser.Scene {
     this.load.svg('volume_on_button', 'assets/svg/volume_on.svg');
   }
 
+  setSoundtrackVolume(volume) {
+    this.soundtrackSettings.volume = volume;
+    this.game.soundtrack.volume = volume;
+    this.soundtrackText.setText(`Soundtrack: ${volume.toFixed(1) * 100}`);
+    window.localStorage.setItem("soundtrackSettings", JSON.stringify(this.soundtrackSettings));
+  }
+
+  setSoundtrackMute(mute) {
+    this.soundtrackSettings.mute = mute;
+    this.game.soundtrack.mute = mute;
+    var soundtrackMuteSVGKey = mute ? 'volume_on_button' : 'volume_off_button';
+    this.soundtrackMute.setTexture(soundtrackMuteSVGKey);
+    window.localStorage.setItem("soundtrackSettings", JSON.stringify(this.soundtrackSettings));
+  }
+
+  setSoundtrackSettings() {
+    var soundtrackSettings = JSON.parse(window.localStorage.getItem('soundtrackSettings'));
+    if (soundtrackSettings != null) {
+      this.soundtrackSettings.volume = parseFloat(soundtrackSettings["volume"]).toFixed(1);
+      this.soundtrackSettings.mute = soundtrackSettings["mute"];
+      this.game.soundtrack.volume = this.soundtrackSettings.volume;
+      this.game.soundtrack.mute = this.soundtrackSettings.mute;
+    }
+
+    this.soundtrackText = this.add.text(700, 250, `Soundtrack: ${this.soundtrackSettings.volume * 100}`, CONSTANTS.textStyle);
+    this.soundtrackText.setScrollFactor(0);
+
+    this.soundtrackLessVolume = this.add.sprite(900, 260, 'less_volume_button').setInteractive({ useHandCursor: true, });
+    this.soundtrackLessVolume.on('pointerdown', (event) => {
+      this.setSoundtrackVolume(Math.max(this.game.soundtrack.volume - 0.1, 0));
+    }, this);
+
+    this.soundtrackMoreVolume = this.add.sprite(950, 260, 'more_volume_button').setInteractive({ useHandCursor: true, });
+    this.soundtrackMoreVolume.on('pointerdown', (event) => {
+      this.setSoundtrackVolume(Math.min(this.game.soundtrack.volume + 0.1, 1));
+    }, this);
+
+    var soundtrackMuteSVGKey = this.soundtrackSettings.mute ? 'volume_on_button' : 'volume_off_button';
+    this.soundtrackMute = this.add.sprite(1000, 260, soundtrackMuteSVGKey).setInteractive({ useHandCursor: true, });
+    this.soundtrackMute.on('pointerdown', (event) => {
+      this.setSoundtrackMute(!this.game.soundtrack.mute);
+    });
+  }
+
   create() {
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -33,28 +81,7 @@ class SettingsScene extends Phaser.Scene {
     // create the ground layer
     var groundLayer = map.createDynamicLayer('World', groundTiles, 0, 0);
 
-    this.soundtrackText = this.add.text(700, 250, `Soundtrack: ${this.game.soundtrack.volume.toFixed(1) * 100}`, CONSTANTS.textStyle);
-    this.soundtrackText.setScrollFactor(0);
-
-    this.soundtrackLessVolume = this.add.sprite(900, 260, 'less_volume_button').setInteractive({ useHandCursor: true, });
-    this.soundtrackLessVolume.on('pointerdown', (event) => {
-      this.game.soundtrack.volume = Math.max(this.game.soundtrack.volume - 0.1, 0);
-      this.soundtrackText.setText(`Soundtrack: ${Math.max(this.game.soundtrack.volume - 0.1, 0).toFixed(1) * 100}`);
-    }, this);
-
-    this.soundtrackMoreVolume = this.add.sprite(950, 260, 'more_volume_button').setInteractive({ useHandCursor: true, });
-    this.soundtrackMoreVolume.on('pointerdown', (event) => {
-      this.game.soundtrack.volume = Math.min(this.game.soundtrack.volume + 0.1, 1);
-      this.soundtrackText.setText(`Soundtrack: ${Math.min(this.game.soundtrack.volume + 0.1, 1).toFixed(1) * 100}`);
-    }, this);
-
-    var soundtrackMuteSVGKey = this.game.soundtrack.mute ? 'volume_on_button' : 'volume_off_button';
-    this.soundtrackMute = this.add.sprite(1000, 260, soundtrackMuteSVGKey).setInteractive({ useHandCursor: true, });
-    this.soundtrackMute.on('pointerdown', (event) => {
-        this.game.soundtrack.mute = !this.game.soundtrack.mute;
-        soundtrackMuteSVGKey = !this.game.soundtrack.mute ? 'volume_on_button' : 'volume_off_button';
-        this.soundtrackMute.setTexture(soundtrackMuteSVGKey);
-    });
+    this.setSoundtrackSettings();
 
 
     // this.combatText = this.add.text(700, 300, `Combat: ${this.game.global.combat.volume.toFixed(1) * 100}`, CONSTANTS.textStyle);
