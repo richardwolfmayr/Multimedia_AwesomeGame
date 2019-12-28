@@ -22,20 +22,24 @@ class PlayScene extends Phaser.Scene {
   }
 
   preload() {
+
       // map made with Tiled in JSON format
-      this.load.tilemapTiledJSON('map', 'assets/map.json');
+      this.load.tilemapTiledJSON('map', 'assets/map1.json');
       // tiles in spritesheet
-      this.load.spritesheet('tiles', 'assets/tiles.png', {frameWidth: 70, frameHeight: 70});
+      this.load.spritesheet('diabloTiles', 'assets/diabloTiles.png', {frameWidth: 70, frameHeight: 70});
       // simple coin image
-      this.load.image('coin', 'assets/coinGold.png');
+      this.load.image('coinGold', 'assets/coinGold.png');
       // player animations
       this.load.atlas('player', 'assets/player.png', 'assets/player.json');
+
+      //background image
+      this.load.image('dungeonBackground', 'assets/dungeonBackground.png');
 
       // Enemy animations
       this.load.atlas('enemy', 'assets/player.png', 'assets/player.json');
 
 
-      this.load.spritesheet('redTiles', 'assets/redTile.png', {frameWidth: 70, frameHeight: 70});
+      // this.load.spritesheet('redTiles', 'assets/redTile.png', {frameWidth: 70, frameHeight: 70});
 
       this.load.audio('jump_sound', ['assets/audio/jump.mp3']);
       this.load.audio('enemy_dying', ['assets/audio/enemy_dying.mp3'])
@@ -111,7 +115,7 @@ class PlayScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player.sprite);
 
     // set background color, so the sky is not black
-    this.cameras.main.setBackgroundColor('#ccccff');
+    //this.cameras.main.setBackgroundColor('#ccccff');
   }
 
   setWeapons() {
@@ -147,61 +151,71 @@ class PlayScene extends Phaser.Scene {
     this.backContainer.on('pointerdown', (event) => this.scene.start('mainMenuScene'), this); // Start game on click.
   }
 
+  //the order is important! first thing places is in the very back
   create() {
+    // add background:
+    this.add.image(0, 0, 'dungeonBackground').setOrigin(0, 0)
+
     this.setWeapons();
     this.setBackButton();
 
-      this.jumpSound = this.game.sound.add('jump_sound');
-      this.enemyDyingSound = this.game.sound.add('enemy_dying');
-      this.shootingSound = this.game.sound.add('shooting');
-      // load the map
-      this.map = this.make.tilemap({key: 'map'});
 
-      // tiles for the ground layer
-      this.groundTiles = this.map.addTilesetImage('tiles');
-      // create the ground layer
-      this.groundLayer = this.map.createDynamicLayer('World', this.groundTiles, 0, 0);
-      // the player will collide with this layer
-      this.groundLayer.setCollisionByExclusion([-1]);
+    this.jumpSound = this.game.sound.add('jump_sound');
+    this.enemyDyingSound = this.game.sound.add('enemy_dying');
+    this.shootingSound = this.game.sound.add('shooting');
+    // load the map
+    this.map = this.make.tilemap({key: 'map'});
 
-      // coin image used as tileset
-      var coinTiles = this.map.addTilesetImage('coin');
+    // tiles for the ground layer
+    this.groundTiles = this.map.addTilesetImage('diabloTiles');
+    // create the ground layer
+    this.groundLayer = this.map.createDynamicLayer('World', this.groundTiles, 0, 0);
+    // the player will collide with this layer
+    this.groundLayer.setCollisionByExclusion([-1]);
 
-      // add coins as tiles
-      this.coinLayer = this.map.createDynamicLayer('Coins', coinTiles, 0, 0);
+    // coin image used as tileset
+    var coinTiles = this.map.addTilesetImage('coinGold');
 
-      //redTiles
-      var redTiles = this.map.addTilesetImage('redTiles');
-      // create the ground layer
-      var redLayer = this.map.createDynamicLayer('redTiles', redTiles, 0, 0);
+    // add coins as tiles
+    this.coinLayer = this.map.createDynamicLayer('Coins', coinTiles, 0, 0);
 
-      // set the boundaries of our game world
-      this.physics.world.bounds.width = this.groundLayer.width;
-      this.physics.world.bounds.height = this.groundLayer.height;
 
-      // when the player overlaps with a tile with index 17, collectCoin will be called
-      this.coinLayer.setTileIndexCallback(17, this.collectCoin, this);
+    //redTiles
+    // var redTiles = this.map.addTilesetImage('redTiles');
+    // create the ground layer
+    // var redLayer = this.map.createDynamicLayer('redTiles', redTiles, 0, 0);
 
-      this.cursors = this.input.keyboard.createCursorKeys();
-      this.cursors.spacebar = this.input.keyboard.addKey('SPACE');
-      this.cursors.shift = this.input.keyboard.addKey('SHIFT');
-      this.cursors.P = this.input.keyboard.addKey('P');
+    // set the boundaries of our game world
+    this.physics.world.bounds.width = this.groundLayer.width;
+    this.physics.world.bounds.height = this.groundLayer.height;
 
-      this.createPlayer();
-      this.createEnemies();
-      this.setCameras();
 
-      // this text will show the score
-      this.scoreText = this.add.text(20, 570, `Coins: ${this.coinsCollected}`, CONSTANTS.textStyle);
-      // fix the text to the camera
-      this.scoreText.setScrollFactor(0);
 
-      window.onkeydown = (event) => {
-        if (event.key == "p" || event.key == "P") {
-          this.isPaused = !this.isPaused;
-          this.isPaused ? this.scene.pause() : this.scene.resume();
-        }
-      };
+    // when the player overlaps with a tile with index 17, collectCoin will be called
+    this.coinLayer.setTileIndexCallback(17, this.collectCoin, this);
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.cursors.spacebar = this.input.keyboard.addKey('SPACE');
+    this.cursors.shift = this.input.keyboard.addKey('SHIFT');
+    this.cursors.P = this.input.keyboard.addKey('P');
+
+    this.createPlayer();
+    this.createEnemies();
+    this.setCameras();
+
+
+    // this text will show the score
+    this.scoreText = this.add.text(20, 570, `Coins: ${this.coinsCollected}`, CONSTANTS.textStyle);
+    // fix the text to the camera
+    this.scoreText.setScrollFactor(0);
+
+
+    window.onkeydown = (event) => {
+      if (event.key == "p" || event.key == "P") {
+        this.isPaused = !this.isPaused;
+        this.isPaused ? this.scene.pause() : this.scene.resume();
+      }
+    };
   }
 
   damagePlayer(enemySprite, playerSprite) {

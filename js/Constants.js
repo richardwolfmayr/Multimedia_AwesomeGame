@@ -2,7 +2,7 @@ var CONSTANTS = {
   svgOffset         : 48,
   textStyle : {
       fontSize: '20px',
-      fill: '#000000'
+      fill: '#FFFFFF'
   },
   SHOOTING_TIMEOUT  : 200,
 }
