@@ -15,28 +15,31 @@ class PlayScene extends Phaser.Scene {
     this.shootTime = 0;
     this.bullets = [];
     this.isPaused = false;
+
   }
 
-  init() {
-
+  init(data) {
+    debugger
+    this.selectedMap = data;
   }
 
   preload() {
-
+      debugger
       // map made with Tiled in JSON format
-      this.load.tilemapTiledJSON('map', 'assets/map1.json');
+      this.load.tilemapTiledJSON('map', `assets/tiles/map${this.selectedMap}.json?`+new Date().getTime());
+
       // tiles in spritesheet
-      this.load.spritesheet('diabloTiles', 'assets/diabloTiles.png', {frameWidth: 70, frameHeight: 70});
+      this.load.spritesheet('diabloTiles', 'assets/tiles/diabloTiles.png', {frameWidth: 70, frameHeight: 70});
       // simple coin image
-      this.load.image('coinGold', 'assets/coinGold.png');
+      this.load.image('coinGold', 'assets/tiles/coinGold.png');
       // player animations
       this.load.atlas('player', 'assets/player.png', 'assets/player.json');
 
       //background image
-      this.load.image('dungeonBackground', 'assets/dungeonBackground.png');
+      this.load.image('dungeonBackground', 'assets/tiles/dungeonBackground.png');
 
       // Enemy animations
-      this.load.atlas('enemy', 'assets/player.png', 'assets/player.json');
+      this.load.atlas('enemy', 'assets/tiles/player.png', 'assets/player.json');
 
 
       // this.load.spritesheet('redTiles', 'assets/redTile.png', {frameWidth: 70, frameHeight: 70});
@@ -148,7 +151,13 @@ class PlayScene extends Phaser.Scene {
     this.backButton = this.add.sprite(0, 10, 'back_button');
 
     this.backContainer = CommonMethodHelper.addContainer(this, 50, 50 , [this.backButton, this.backText], 170, 40);
+
     this.backContainer.on('pointerdown', (event) => this.scene.start('mainMenuScene'), this); // Start game on click.
+
+    // this.backContainer.on('pointerdown', function (event) {
+    //   event.manager.game.scene.start('mainMenuScene');
+    //   event.manager.game.scene.stop('playScene');
+    // })
   }
 
   //the order is important! first thing places is in the very back
