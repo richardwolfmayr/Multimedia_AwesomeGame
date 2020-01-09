@@ -19,12 +19,10 @@ class PlayScene extends Phaser.Scene {
   }
 
   init(data) {
-    debugger
     this.selectedMap = data;
   }
 
   preload() {
-      debugger
       // map made with Tiled in JSON format
       this.load.tilemapTiledJSON('map', `assets/tiles/map${this.selectedMap}.json?`+new Date().getTime());
 
@@ -163,11 +161,12 @@ class PlayScene extends Phaser.Scene {
   //the order is important! first thing places is in the very back
   create() {
     // add background:
-    this.add.image(0, 0, 'dungeonBackground').setOrigin(0, 0)
+    this.add.image(0, 0, 'dungeonBackground').setOrigin(0, 0);
 
     this.setWeapons();
     this.setBackButton();
 
+    debugger
 
     this.jumpSound = this.game.sound.add('jump_sound');
     this.enemyDyingSound = this.game.sound.add('enemy_dying');
@@ -202,6 +201,7 @@ class PlayScene extends Phaser.Scene {
 
     // when the player overlaps with a tile with index 17, collectCoin will be called
     this.coinLayer.setTileIndexCallback(17, this.collectCoin, this);
+    //this should really not be hardcoded, but i don't know any better solution so far... on these maps the gold has firstgid: 17, at the last map it had 61... who knows
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.cursors.spacebar = this.input.keyboard.addKey('SPACE');
