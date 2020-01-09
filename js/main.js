@@ -17,7 +17,8 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: {y: 1500},
-            debug: false
+            debug: false,
+            TILE_BIAS: 16
         }
     }
 };

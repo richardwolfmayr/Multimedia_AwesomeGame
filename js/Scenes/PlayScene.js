@@ -283,6 +283,7 @@ class PlayScene extends Phaser.Scene {
   }
 
   collectCoin(sprite, tile) {
+    debugger
       this.coinLayer.removeTileAt(tile.x, tile.y); // remove the tile/coin
       this.coinsCollected++; // add 1 points to the score
       this.scoreText.setText(`Coins: ${this.coinsCollected}`); // set the text to show the current score
