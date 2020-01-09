@@ -3,11 +3,11 @@ import DumbEnemy from './DumbEnemy.js';
 class DumbEnemyWithJump extends DumbEnemy {
   constructor(scene, xCoord, yCoord, assetKey, deathSound) {
     super(scene, xCoord, yCoord, assetKey, deathSound);
-    this.sprite.body.setSize(this.sprite.width, this.sprite.height - 8);
+    this.sprite.body.setSize(this.sprite.width - 40, this.sprite.height + 60);
   }
 
   move() {
-    this.sprite.anims.play('walk', true);
+    this.sprite.anims.play('walk1', true);
     this.randomStep();
     this.randomJump();
     return this;

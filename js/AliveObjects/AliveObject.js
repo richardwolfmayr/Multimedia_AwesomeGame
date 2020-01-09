@@ -7,6 +7,7 @@ class AliveObject {
     this.deathSound = deathSound;
     this.isDead = false;
     this.setHealthBar();
+	this.sprite.scale = 0.3;
   }
 
   setHealthBar() {

@@ -32,6 +32,36 @@ class PlayScene extends Phaser.Scene {
       this.load.image('coinGold', 'assets/tiles/coinGold.png');
       // player animations
       this.load.atlas('player', 'assets/player.png', 'assets/player.json');
+	  
+	  
+	  this.load.image('walk0', 'assets/PNG/wizard_fire/3_RUN_000.png');
+	  this.load.image('walk1', 'assets/PNG/wizard_fire/3_RUN_001.png');
+	  this.load.image('walk2', 'assets/PNG/wizard_fire/3_RUN_002.png');
+	  this.load.image('walk3', 'assets/PNG/wizard_fire/3_RUN_003.png');
+	  
+	  this.load.image('ewalk0', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_000.png');
+	  this.load.image('ewalk1', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_001.png');
+	  this.load.image('ewalk2', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_002.png');
+	  this.load.image('ewalk3', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_003.png');
+	  this.load.image('ewalk4', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_004.png');
+	  this.load.image('ewalk5', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_005.png');
+	  this.load.image('ewalk6', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_006.png');
+	  this.load.image('ewalk7', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_007.png');
+	  this.load.image('ewalk8', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_008.png');
+	  this.load.image('ewalk9', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_009.png');
+	  this.load.image('ewalk10', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_010.png');
+	  this.load.image('ewalk11', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_011.png');
+	  
+	  this.load.image('idle0', 'assets/PNG/wizard_fire/1_IDLE_000.png');
+	  this.load.image('idle1', 'assets/PNG/wizard_fire/1_IDLE_001.png');
+	  this.load.image('idle2', 'assets/PNG/wizard_fire/1_IDLE_002.png');
+	  this.load.image('idle3', 'assets/PNG/wizard_fire/1_IDLE_003.png');
+	  this.load.image('idle4', 'assets/PNG/wizard_fire/1_IDLE_004.png');
+	  
+	  
+	  
+	  
+	  
 
       //background image
       this.load.image('dungeonBackground', 'assets/tiles/dungeonBackground.png');
@@ -61,41 +91,79 @@ class PlayScene extends Phaser.Scene {
 
   createPlayer() {
     // create the player sprite
-    this.player = new Player(this, 200, 200, 'player', this.enemyDyingSound);
+    this.player = new Player(this, 200, 300, 'player', this.enemyDyingSound);
 
     // player will collide with the level tiles
     this.physics.add.collider(this.player.sprite, this.groundLayer);
     this.physics.add.overlap(this.player.sprite, this.coinLayer);
 
     // player walk animation
-    this.anims.create({
+	    this.anims.create({
         key: 'walk',
-        frames: this.anims.generateFrameNames('player', {prefix: 'p1_walk', start: 1, end: 11, zeroPad: 2}),
+        frames: [
+            { key: 'walk0' },
+            { key: 'walk1' },
+            { key: 'walk2' },
+            { key: 'walk3' }
+        ],
         frameRate: 10,
+        repeat: 1
+    });
+	//
+	this.anims.anims.size = 0.5;
+	
+
+	this.anims.create({
+        key: 'idle',
+        frames: [
+            { key: 'idle0' },
+            { key: 'idle1' },
+            { key: 'idle2' },
+            { key: 'idle3' },
+			{ key: 'idle4' }
+        ],
+        frameRate: 5,
         repeat: -1
     });
-    // idle with only one frame, so repeat is not neaded
-    this.anims.create({
-        key: 'idle',
-        frames: [{key: 'player', frame: 'p1_stand'}],
-        frameRate: 10,
-    });
+	  
   }
+
 
   createEnemies() {
     this.enemies = [];
 
-    this.anims.create({
-        key: 'walk',
-        frames: this.anims.generateFrameNames( 'enemy', {prefix: 'p1_walk', start: 1, end: 11, zeroPad: 2}),
+    // player walk animation
+	    this.anims.create({
+        key: 'walk1',
+        frames: [
+            { key: 'ewalk0' },
+            { key: 'ewalk1' },
+            { key: 'ewalk2' },
+			{ key: 'ewalk3' },
+			{ key: 'ewalk4' },
+			{ key: 'ewalk5' },
+			{ key: 'ewalk6' },
+			{ key: 'ewalk7' },
+			{ key: 'ewalk8' },
+			{ key: 'ewalk9' },
+			{ key: 'ewalk10' },
+            { key: 'ewalk11' }
+        ],
         frameRate: 10,
-        repeat: -1
+        repeat: 1
     });
 
-    this.anims.create({
-        key: 'idle',
-        frames: [{key:  'enemy', frame: 'p1_stand'}],
+	this.anims.create({
+        key: 'idle1',
+        frames: [
+            { key: 'idle0' },
+            { key: 'idle1' },
+            { key: 'idle2' },
+            { key: 'idle3' },
+			{ key: 'idle4' }
+        ],
         frameRate: 10,
+        repeat: -1
     });
 
     for (var i = 0; i < 6; i++) {
