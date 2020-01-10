@@ -52,6 +52,25 @@ class PlayScene extends Phaser.Scene {
 	  this.load.image('ewalk10', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_010.png');
 	  this.load.image('ewalk11', 'assets/Golem_3/PNG/PNG Sequences/Running/0_Golem_Running_011.png');
 	  
+	  this.load.image('eidle0', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_000.png');
+	  this.load.image('eidle1', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_001.png');
+	  this.load.image('eidle2', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_002.png');
+	  this.load.image('eidle3', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_003.png');
+	  this.load.image('eidle4', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_004.png');
+	  this.load.image('eidle5', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_005.png');
+	  this.load.image('eidle6', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_006.png');
+	  this.load.image('eidle7', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_007.png');
+	  this.load.image('eidle8', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_008.png');
+	  this.load.image('eidle9', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_009.png');
+	  this.load.image('eidle10', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_010.png');
+	  this.load.image('eidle11', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_011.png');
+	  this.load.image('eidle12', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_012.png');
+	  this.load.image('eidle13', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_013.png');
+	  this.load.image('eidle14', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_014.png');
+	  this.load.image('eidle15', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_015.png');
+	  this.load.image('eidle16', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_016.png');
+	  this.load.image('eidle17', 'assets/Golem_3/PNG/PNG Sequences/Idle/0_Golem_Idle_017.png');
+	  
 	  this.load.image('idle0', 'assets/PNG/wizard_fire/1_IDLE_000.png');
 	  this.load.image('idle1', 'assets/PNG/wizard_fire/1_IDLE_001.png');
 	  this.load.image('idle2', 'assets/PNG/wizard_fire/1_IDLE_002.png');
@@ -91,7 +110,7 @@ class PlayScene extends Phaser.Scene {
 
   createPlayer() {
     // create the player sprite
-    this.player = new Player(this, 200, 300, 'player', this.enemyDyingSound);
+    this.player = new Player(this, 200, 200, 'player', this.enemyDyingSound);
 
     // player will collide with the level tiles
     this.physics.add.collider(this.player.sprite, this.groundLayer);
@@ -150,17 +169,30 @@ class PlayScene extends Phaser.Scene {
             { key: 'ewalk11' }
         ],
         frameRate: 10,
-        repeat: 1
+        repeat: -1
     });
 
 	this.anims.create({
         key: 'idle1',
         frames: [
-            { key: 'idle0' },
-            { key: 'idle1' },
-            { key: 'idle2' },
-            { key: 'idle3' },
-			{ key: 'idle4' }
+            { key: 'eidle0' },
+            { key: 'eidle1' },
+            { key: 'eidle2' },
+            { key: 'eidle3' },
+			{ key: 'eidle4' },
+			{ key: 'eidle5' },
+			{ key: 'eidle6' },
+			{ key: 'eidle7' },
+			{ key: 'eidle8' },
+			{ key: 'eidle9' },
+			{ key: 'eidle10' },
+			{ key: 'eidle11' },
+			{ key: 'eidle12' },
+			{ key: 'eidle13' },
+			{ key: 'eidle14' },
+			{ key: 'eidle15' },
+			{ key: 'eidle16' },
+			{ key: 'eidle17' }
         ],
         frameRate: 10,
         repeat: -1
@@ -168,9 +200,9 @@ class PlayScene extends Phaser.Scene {
 
     for (var i = 0; i < 6; i++) {
       if (Math.random() < 0.5) {
-        this.enemies.push(new DumbEnemy(this, 300 + Math.random() * (window.innerWidth - 200), 200, 'enemy', this.enemyDyingSound));
+        this.enemies.push(new DumbEnemy(this, 500 + Math.random() * (window.innerWidth - 200), 200, 'enemy', this.enemyDyingSound));
       } else {
-        this.enemies.push(new DumbEnemyWithJump(this, 300 + Math.random() * window.innerWidth, 200, 'enemy', this.enemyDyingSound));
+        this.enemies.push(new DumbEnemyWithJump(this, 500 + Math.random() * window.innerWidth, 200, 'enemy', this.enemyDyingSound));
       }
       this.physics.add.collider(this.enemies[i].sprite, this.groundLayer);
       this.physics.add.collider(this.enemies[i].sprite, this.player.sprite, this.damagePlayer, null, this);
@@ -349,6 +381,7 @@ class PlayScene extends Phaser.Scene {
         this.player.move().updateHealthBar();
       }
   }
+  
 
   collectCoin(sprite, tile) {
     debugger

@@ -7,7 +7,9 @@ class Player extends AliveObject {
     this.sprite.setBounce(0.2); // our player will bounce from items
 
     // small fix to our player images, we resize the physics body object slightly
-    this.sprite.body.setSize(this.sprite.width - 40, this.sprite.height + 60);
+    this.sprite.setSize(210, 300);
+	this.sprite.setOffset(this.sprite.width, this.sprite.height);
+	debugger;
   }
 
   move() {

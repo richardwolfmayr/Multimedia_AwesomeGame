@@ -17,7 +17,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: {y: 2000},
-            debug: false,
+            debug: true,
             TILE_BIAS: 64
         }
     }
@@ -34,7 +34,6 @@ game.scene.add('settingsScene', settingsScene);
 game.scene.add('playScene', playScene);
 game.scene.add('pickMapScene', pickMapScene);
 game.scene.add('helpScene', helpScene);
-
 
 
 game.scene.start('mainMenuScene');
