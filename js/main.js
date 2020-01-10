@@ -16,7 +16,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 2000},
+            gravity: {y: 1500},
             debug: false,
             TILE_BIAS: 64
         }
