@@ -91,8 +91,8 @@ class PlayScene extends Phaser.Scene {
 
       // this.load.spritesheet('redTiles', 'assets/redTile.png', {frameWidth: 70, frameHeight: 70});
 
-      this.load.audio('jump_sound', ['assets/audio/jump.mp3']);
-      this.load.audio('enemy_dying', ['assets/audio/enemy_dying.mp3'])
+      this.load.audio('jump_sound', ['assets/audio/jumpnew.mp3']);
+      this.load.audio('enemy_dying', ['assets/audio/enemy_dyingnew.mp3'])
       this.load.audio('shooting', ['assets/audio/shooting.mp3']);
 
       this.load.svg('bullet', 'assets/svg/arrow_bullet_0.svg');
@@ -200,9 +200,9 @@ class PlayScene extends Phaser.Scene {
 
     for (var i = 0; i < 6; i++) {
       if (Math.random() < 0.5) {
-        this.enemies.push(new DumbEnemy(this, 500 + Math.random() * (window.innerWidth - 200), 200, 'enemy', this.enemyDyingSound));
+        this.enemies.push(new DumbEnemy(this, 1500 + Math.random() * (window.innerWidth - 200), 200, 'enemy', this.enemyDyingSound));
       } else {
-        this.enemies.push(new DumbEnemyWithJump(this, 500 + Math.random() * window.innerWidth, 200, 'enemy', this.enemyDyingSound));
+        this.enemies.push(new DumbEnemyWithJump(this, 1500 + Math.random() * window.innerWidth, 200, 'enemy', this.enemyDyingSound));
       }
       this.physics.add.collider(this.enemies[i].sprite, this.groundLayer);
       this.physics.add.collider(this.enemies[i].sprite, this.player.sprite, this.damagePlayer, null, this);

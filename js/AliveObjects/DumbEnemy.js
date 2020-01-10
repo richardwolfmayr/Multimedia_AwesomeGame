@@ -15,7 +15,7 @@ class DumbEnemy extends AliveObject {
   };
 
   randomStep() {
-      this.sprite.setVelocityX(-200);
+      this.sprite.setVelocityX(-30);
       this.sprite.flipX = true;
 
   }
