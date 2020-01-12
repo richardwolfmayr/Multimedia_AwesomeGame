@@ -30,7 +30,8 @@ class Player extends AliveObject {
 		}
         this.sprite.flipX = false; // use the original sprite looking to the right
 	} else if (this.scene.cursors.spacebar.isDown) {
-		this.sprite.anims.play('attack', true);
+		this.sprite.body.setVelocityX(0);
+		this.sprite.anims.play('attack', true);		
     } else {
         this.sprite.body.setVelocityX(0);
         this.sprite.anims.play('idle', true);
