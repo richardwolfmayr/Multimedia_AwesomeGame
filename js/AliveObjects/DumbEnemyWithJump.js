@@ -17,8 +17,9 @@ class DumbEnemyWithJump extends DumbEnemy {
   randomJump() {
     if (Math.random() < 0.5 && this.sprite.body.onFloor()) {
       this.sprite.body.setVelocityY(-800);
+	  this.sprite.anims.play('walk1', true);
     } else {
-		this.sprite.anims.play('idle1', true);
+		this.sprite.anims.play('walk1', true);
 	}
   }
 }

@@ -77,6 +77,12 @@ class PlayScene extends Phaser.Scene {
 	  this.load.image('idle3', 'assets/PNG/wizard_fire/1_IDLE_003.png');
 	  this.load.image('idle4', 'assets/PNG/wizard_fire/1_IDLE_004.png');
 	  
+	  this.load.image('attack0', 'assets/PNG/wizard_fire/5_ATTACK_000.png');
+	  this.load.image('attack1', 'assets/PNG/wizard_fire/5_ATTACK_002.png');
+	  this.load.image('attack3', 'assets/PNG/wizard_fire/5_ATTACK_004.png');
+	  this.load.image('attack4', 'assets/PNG/wizard_fire/5_ATTACK_005.png');
+	  this.load.image('attack5', 'assets/PNG/wizard_fire/5_ATTACK_006.png');
+	  
 	  
 	  
 	  
@@ -92,7 +98,8 @@ class PlayScene extends Phaser.Scene {
       // this.load.spritesheet('redTiles', 'assets/redTile.png', {frameWidth: 70, frameHeight: 70});
 
       this.load.audio('jump_sound', ['assets/audio/jumpnew.mp3']);
-      this.load.audio('enemy_dying', ['assets/audio/enemy_dyingnew.mp3'])
+      this.load.audio('enemy_dying', ['assets/audio/enemy_dyingnew.mp3']);
+	  this.load.audio('player_dying', ['assets/audio/player_dying.mp3']);
       this.load.audio('shooting', ['assets/audio/shooting.mp3']);
 
       this.load.svg('bullet', 'assets/svg/arrow_bullet_0.svg');
@@ -110,7 +117,7 @@ class PlayScene extends Phaser.Scene {
 
   createPlayer() {
     // create the player sprite
-    this.player = new Player(this, 200, 200, 'player', this.enemyDyingSound);
+    this.player = new Player(this, 200, 200, 'player', this.playerDyingSound);
 
     // player will collide with the level tiles
     this.physics.add.collider(this.player.sprite, this.groundLayer);
@@ -142,6 +149,19 @@ class PlayScene extends Phaser.Scene {
 			{ key: 'idle4' }
         ],
         frameRate: 5,
+        repeat: -1
+    });
+	
+		this.anims.create({
+        key: 'attack',
+        frames: [
+            { key: 'attack0' },
+            { key: 'attack1' },
+            { key: 'attack3' },
+			{ key: 'attack4' },
+			{ key: 'attack5' }
+        ],
+        frameRate: 10,
         repeat: -1
     });
 	  
@@ -270,6 +290,7 @@ class PlayScene extends Phaser.Scene {
 
     this.jumpSound = this.game.sound.add('jump_sound');
     this.enemyDyingSound = this.game.sound.add('enemy_dying');
+	this.playerDyingSound = this.game.sound.add('player_dying');
     this.shootingSound = this.game.sound.add('shooting');
     // load the map
     this.map = this.make.tilemap({key: 'map'});
@@ -360,6 +381,7 @@ class PlayScene extends Phaser.Scene {
           bullet.direction = this.player.sprite.flipX ? 'WEST' : 'EAST';
           this.enemies.forEach((enemy) => this.physics.add.collider(bullet, enemy.sprite, this.bulletHitsEnemy, null, this));
           this.bullets.push(bullet);
+		  
         }
       }
 
