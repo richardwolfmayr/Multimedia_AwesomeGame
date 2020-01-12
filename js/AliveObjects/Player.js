@@ -14,17 +14,28 @@ class Player extends AliveObject {
 
   move() {
     if (this.scene.cursors.left.isDown) {
-        this.sprite.body.setVelocityX(-200);
-        this.sprite.anims.play('walk', true); // walk left
+		this.sprite.body.setVelocityX(-200);
+		if(this.scene.cursors.spacebar.isDown){
+			this.sprite.anims.play('attack', true);
+		} else {
+			this.sprite.anims.play('walk', true); // walk left
+		}
         this.sprite.flipX = true; // flip the sprite to the left
     } else if (this.scene.cursors.right.isDown) {
         this.sprite.body.setVelocityX(200);
-        this.sprite.anims.play('walk', true);
+		if(this.scene.cursors.spacebar.isDown){
+			this.sprite.anims.play('attack', true);
+		} else {
+			this.sprite.anims.play('walk', true); // walk right
+		}
         this.sprite.flipX = false; // use the original sprite looking to the right
+	} else if (this.scene.cursors.spacebar.isDown) {
+		this.sprite.anims.play('attack', true);
     } else {
         this.sprite.body.setVelocityX(0);
         this.sprite.anims.play('idle', true);
     }
+	
 
     // Jump
     if (this.scene.cursors.up.isDown && this.sprite.body.onFloor()) {
@@ -36,6 +47,7 @@ class Player extends AliveObject {
 
     return this;
   };
+  
 }
 
 export default Player;
